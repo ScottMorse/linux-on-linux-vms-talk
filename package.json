@@ -1,0 +1,13 @@
+{
+  "name": "linux-on-linux",
+  "description": "A marp-powered presentation about VMs and overlays for local sandboxes",
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  }
+}
