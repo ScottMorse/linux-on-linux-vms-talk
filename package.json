@@ -8,7 +8,7 @@
     "dev": "bun run ./scripts/dev.ts",
     "diagrams": "bun run ./scripts/build-diagrams.ts",
     "diagrams:watch": "bun run ./scripts/build-diagrams.ts --watch",
-    "build": "marp ./slides/index.md --output ./dist/index.html && mkdir -p dist/diagrams && cp slides/diagrams/*.svg dist/diagrams/",
+    "build": "marp ./slides/index.md --output ./dist/index.html && mkdir -p dist/diagrams && cp slides/diagrams/*.svg dist/diagrams/ && cp -r slides/assets/ dist/",
     "build:pdf": "marp ./slides/index.md --output ./dist/index.pdf --allow-local-files",
     "build:pptx": "marp ./slides/index.md --output ./dist/index.pptx --allow-local-files",
     "preview": "marp ./slides/index.md --preview"
