@@ -44,9 +44,7 @@ A local virtual machine provides a **fully separate operating system**.
 Modern VM tooling is **highly optimized** so that you only use the resources you need.
 
 - VM's instructions run on **real CPU cores** securely
-  - Only the cores actually being used are taken, up to the max allocated
-- Storage and memory
-  operate similarly, where **only the space needed is used**.
+- Generally, the resources allocated are **only used when needed**.
 
 ## For Development
 
@@ -60,13 +58,12 @@ with a full-featured desktop environment.
 Containers are:
 
 - More lightweight
-- Less isolated
-  - Share the host's kernel
-    - macOS nuance: Docker Desktop uses a Linux VM to run containers, but all containers share that VM's kernel
+- Less isolated (isolated **process** rather than **machine**)
+  - Containers share the host's kernel
+    - macOS nuance: Docker containers share a Linux VM's kernel under the hood
   - Limited to a headless environment
     - Browser work must happen on your host
     - Less can be provided within the isolated sandbox to an agent
-  - Isolation is at the **process** level, rather than the **machine** level
 
 ---
 
@@ -117,8 +114,6 @@ Containers are:
 
 # Overlays
 
-What do you do when you want multiple VMs that are isolated from each other?
-
 **Overlays** provide an optimized layer on top of a **base VM image** that
 act light lightweight clones.
 
@@ -126,8 +121,33 @@ An overlay:
 
 - Acts like a separate VM
 - Is fast to spin up and tear down once your base image exists
-- Is optimized for space and performance
-  - Storage: only its changes on top of the base system are written
-  - CPU/RAM: allocated just like any other VM
+- Is storage-optimized: only its changes on top of the base system are written
 - Can have a dedicated shared filesystem
   - You can stage a project's code in a shared directory from your host
+
+---
+
+##### Overlays: Example setup
+
+![height:620](diagrams/overlays.svg)
+
+---
+
+# Agentic Development Workflow
+
+## Syncing Code Changes
+
+I prefer to use **git bundles** to sync code changes from an overlay.
+
+- A **bundle** is a pack of commits that can be transferred between repositories
+- I sync bundles between a dedicated **git worktree** on the host and the overlay's shared directory
+- I avoid copying the entire repo to prevent subtle injection from ignored files or git hooks
+
+## Scripting
+
+I use custom scripts to quickly:
+
+- Help me set up a fresh VM base system
+- Create and destroy named overlays on top of the base
+- Stage a repo on a given overlay's shared directory
+- Sync git bundles for a given overlay

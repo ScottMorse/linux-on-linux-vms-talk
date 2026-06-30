@@ -1,0 +1,105 @@
+# Overlays: lightweight per-VM clones layered on one read-only base image.
+# Each overlay writes only its own changes and gets a different host project
+# directory staged into it over a virtiofs share.
+vars: {
+  ...@_theme
+}
+
+direction: right
+
+host: Host {
+
+  style.stroke: "#484f58"
+  style.fill: "#100d0d"
+  style.font-color: "#c9d1d9"
+
+  base: "Base VM image" {
+    shape: cylinder
+    style.stroke: "#8b949e"
+    style.font-color: "#c9d1d9"
+  }
+  proj_web: "~/code/web-app" {
+    style.stroke: "#8b949e"
+    style.font-color: "#c9d1d9"
+  }
+  proj_api: "~/code/api-service" {
+    style.stroke: "#8b949e"
+    style.font-color: "#c9d1d9"
+  }
+  proj_data: "~/code/data-pipeline" {
+    style.stroke: "#8b949e"
+    style.font-color: "#c9d1d9"
+  }
+}
+
+web: "Overlay VM: web-app" {
+  style.stroke: "#484f58"
+  style.fill: "#100d0d"
+  style.font-color: "#c9d1d9"
+
+  disk: "Overlay virtual disk\n(changes only)" {
+    shape: cylinder
+    style.stroke: "#1dff99"
+    style.font-color: "#c9d1d9"
+  }
+  mount: "/mnt/project" {
+    style.stroke: "#58a6ff"
+    style.font-color: "#c9d1d9"
+  }
+}
+
+api: "Overlay VM: api-service" {
+  style.stroke: "#484f58"
+  style.fill: "#100d0d"
+  style.font-color: "#c9d1d9"
+
+  disk: "Overlay virtual disk\n(changes only)" {
+    shape: cylinder
+    style.stroke: "#1dff99"
+    style.font-color: "#c9d1d9"
+  }
+  mount: "/mnt/project" {
+    style.stroke: "#58a6ff"
+    style.font-color: "#c9d1d9"
+  }
+}
+
+data: "Overlay VM: data-pipeline" {
+  style.stroke: "#484f58"
+  style.fill: "#100d0d"
+  style.font-color: "#c9d1d9"
+
+  disk: "Overlay virtual disk\n(changes only)" {
+    shape: cylinder
+    style.stroke: "#1dff99"
+    style.font-color: "#c9d1d9"
+  }
+  mount: "/mnt/project" {
+    style.stroke: "#58a6ff"
+    style.font-color: "#c9d1d9"
+  }
+}
+
+
+# One base image backs every overlay; each writes only its own changes.
+host.base -> web.disk
+host.base -> api.disk
+host.base -> data.disk
+
+# Invisible ordering edges: pin the base image above the project directories
+# inside the host instead of letting it float to the vertical center.
+host.base -> host.proj_web {
+  style.opacity: 0
+}
+host.base -> host.proj_api {
+  style.opacity: 0
+}
+host.base -> host.proj_data {
+  style.opacity: 0
+}
+
+
+# Each VM gets its own project staged from the host over a virtiofs share.
+host.proj_web -> web.mount: virtiofs
+host.proj_api -> api.mount: virtiofs
+host.proj_data -> data.mount: virtiofs
