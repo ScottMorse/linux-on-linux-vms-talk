@@ -1,4 +1,5 @@
 ---
+title: Linux on Linux - Local VMs for Sandboxed Workflows
 marp: true
 theme: linux-on-linux
 paginate: true
@@ -30,6 +31,34 @@ html: true
 
 ---
 
+# Why VMs?
+
+A local virtual machine provides a **fully separate operating system**.
+
+Modern VM tooling is **highly optimized** so that you only use the resources you need.
+
+For example, the VM's instructions run on **real CPU cores** securely, and only
+the cores actually being used are taken, up to the max allocated.
+
+Storage and memory
+operate similarly, where **only the space needed is used**.
+
+## For Development
+
+You get an entire system you own as a sandbox to **experiment** with or **run an agent more freely**,
+with a full-featured desktop environment.
+
+---
+
+# VMs vs. Containers
+
+- Containers
+  - More lightweight
+  - Share the host's kernel
+  - Isolation limited to a headless environment
+
+---
+
 # Noteworthy Tools
 
 - **KVM**
@@ -48,6 +77,6 @@ html: true
 
 ---
 
-# Noteworthy Tools
+##### Basic VM Architecture
 
-![height:560](diagrams/noteworthy-tools.svg)
+![height:600](diagrams/noteworthy-tools.svg)

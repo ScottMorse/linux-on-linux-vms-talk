@@ -1,42 +1,91 @@
-# The virtualization stack: user-facing tooling at the top,
-# kernel virtualization at the bottom. virtiofsd bridges host and guest.
+# How the host-side tools combine to run and feed a guest VM.
+# KVM and QEMU present virtual hardware to the guest; virtiofsd bridges a host
+# directory into the guest as a shared mount, so it connects to both sides.
 vars: {
   ...@_theme
 }
 
 direction: up
 
-virtmanager: virt-manager (GUI) {
-  style.stroke: "#1dff99"
-  style.font-color: "#c9d1d9"
-}
-
-libvirt: libvirt (API, CLI, daemons) {
-  style.stroke: "#1dff99"
-  style.font-color: "#c9d1d9"
-}
-
-qemu: QEMU (hardware emulation) {
-  style.stroke: "#1dff99"
-  style.font-color: "#c9d1d9"
-}
-
-kernel: Linux kernel {
-  style.stroke: "#8b949e"
+host: Host (your main system) {
+  style.stroke: "#484f58"
+  style.fill: "#100d0d"
   style.font-color: "#c9d1d9"
 
-  kvm: KVM (CPU + RAM) {
+  virtmanager: virt-manager (GUI) {
     style.stroke: "#1dff99"
+    style.font-color: "#c9d1d9"
+  }
+  libvirt: libvirt (API, CLI, daemons) {
+    style.stroke: "#1dff99"
+    style.font-color: "#c9d1d9"
+  }
+  qemu: QEMU (hardware emulation) {
+    style.stroke: "#1dff99"
+    style.font-color: "#c9d1d9"
+  }
+  kernel: Linux kernel {
+    style.stroke: "#8b949e"
+    style.fill: "#100d0d"
+    style.font-color: "#c9d1d9"
+
+    kvm: KVM (CPU + RAM) {
+      style.stroke: "#1dff99"
+      style.font-color: "#c9d1d9"
+    }
+  }
+  share: shared directory {
+    style.stroke: "#8b949e"
+    style.font-color: "#c9d1d9"
+  }
+  disk: Disk Image\nVM OS installation\n(qcow2 / real partition) {
+    shape: cylinder
+    style.stroke: "#1dff99"
+    style.font-color: "#c9d1d9"
+  }
+  virtiofsd: virtiofsd {
+    style.stroke: "#58a6ff"
     style.font-color: "#c9d1d9"
   }
 }
 
-virtiofsd: virtiofsd (shared filesystem) {
-  style.stroke: "#58a6ff"
+guest: Guest VM {
+  style.stroke: "#484f58"
+  style.fill: "#100d0d"
   style.font-color: "#c9d1d9"
+
+  vcpu: virtual CPU + RAM {
+    style.stroke: "#1dff99"
+    style.font-color: "#c9d1d9"
+  }
+  devices: virtual devices {
+    style.stroke: "#1dff99"
+    style.font-color: "#c9d1d9"
+  }
+  drive: virtual disk {
+    shape: cylinder
+    style.stroke: "#1dff99"
+    style.font-color: "#c9d1d9"
+  }
+  mount: /mnt/share {
+    style.stroke: "#58a6ff"
+    style.font-color: "#c9d1d9"
+  }
 }
 
-virtmanager -> libvirt: controls
-libvirt -> qemu: manages
-qemu -> kernel.kvm: uses
-qemu -> virtiofsd: host + guest
+# Management chain on the host.
+host.virtmanager -> host.libvirt: controls
+host.libvirt -> host.qemu: manages
+host.libvirt -> host.virtiofsd: launches
+host.qemu -> host.kernel.kvm: uses
+
+# Virtual hardware presented to the guest.
+host.kernel.kvm -> guest.vcpu: vCPUs + RAM
+host.qemu -> guest.devices: emulation
+
+# virtiofsd bridges a host directory to a guest mount.
+host.share -> host.virtiofsd: exposed
+host.virtiofsd -> guest.mount: available as external volume
+
+# A disk image (or host partition) backs the guest's virtual disk.
+host.disk -> guest.drive: attached
