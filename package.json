@@ -4,8 +4,19 @@
   "module": "index.ts",
   "type": "module",
   "private": true,
+  "scripts": {
+    "dev": "portless linux-on-linux marp --server ./slides",
+    "diagrams": "bun run ./scripts/build-diagrams.ts",
+    "diagrams:watch": "d2 --watch ./slides/diagrams/overlayfs.d2 ./slides/diagrams/overlayfs.svg",
+    "build": "marp ./slides/index.md --output ./dist/index.html && mkdir -p dist/diagrams && cp slides/diagrams/*.svg dist/diagrams/",
+    "build:pdf": "marp ./slides/index.md --output ./dist/index.pdf --allow-local-files",
+    "build:pptx": "marp ./slides/index.md --output ./dist/index.pptx --allow-local-files",
+    "preview": "marp ./slides/index.md --preview"
+  },
   "devDependencies": {
-    "@types/bun": "latest"
+    "@marp-team/marp-cli": "^4.4.0",
+    "@types/bun": "latest",
+    "portless": "^0.15.0"
   },
   "peerDependencies": {
     "typescript": "^5"

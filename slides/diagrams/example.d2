@@ -1,0 +1,21 @@
+# OverlayFS: a read-only lower layer plus a writable upper layer,
+# unified into a single mountpoint.
+direction: up
+
+lower: lowerdir /base (read-only) {
+  style.stroke: "#8b949e"
+  style.font-color: "#c9d1d9"
+}
+
+upper: upperdir /diff (writable) {
+  style.stroke: "#3fb950"
+  style.font-color: "#c9d1d9"
+}
+
+merged: /merged (unified view) {
+  style.stroke: "#58a6ff"
+  style.font-color: "#c9d1d9"
+}
+
+lower -> merged: reads
+upper -> merged: reads + writes
