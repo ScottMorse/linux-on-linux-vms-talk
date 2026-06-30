@@ -1,0 +1,24 @@
+# Shared D2 theme overrides that mirror themes/linux-on-linux.css.
+# Import into a diagram with:  vars: { ...@_theme }
+# Underscore-prefixed files are skipped by scripts/build-diagrams.ts, so this
+# is never rendered on its own.
+d2-config: {
+  theme-overrides: {
+    # Neutrals run text -> background, matching the deck palette.
+    N1: "#c9d1d9" # body text   (--color-fg)
+    N2: "#c9d1d9"
+    N3: "#8b949e" # muted       (--color-muted)
+    N4: "#8b949e"
+    N5: "#30363d"
+    N6: "#161b22"
+    N7: "#070505" # canvas bg   (--color-bg)
+
+    # Primary ramp maps to the deck accent green (--color-accent).
+    B1: "#1dff99"
+    B2: "#1be389"
+    B3: "#15b06b"
+    B4: "#0f7d4c"
+    B5: "#0a3a26"
+    B6: "#070505"
+  }
+}

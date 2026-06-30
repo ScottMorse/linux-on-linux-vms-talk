@@ -12,6 +12,10 @@
   --color-code-bg: #040202;
 }
 
+img {
+  border-radius: 8px;
+}
+
 h1,h2,h3,h4,h5,h6 {
   font-family: "Lexend", sans-serif !important;
 }
@@ -21,17 +25,52 @@ code, pre {
   color: #e8e5e5 !important;
 }
 
+ul {
+  line-height: 1.35;
+}
+
+.link-list {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  margin: auto;
+  width: 640px;
+  font-size: 0.9rem;
+}
+
+.link-list p {
+  margin-bottom: -5px !important;
+}
+
+.link-list strong {
+  display: inline-block;
+  color: white !important;
+  min-width: 200px;
+  text-align: right;
+}
+
 section {
   background-color: var(--color-bg);
   color: var(--color-fg);
   font-family: 'IBM Plex Sans', 'Inter', 'Segoe UI', system-ui, sans-serif;
-  padding: 70px;
+  padding: 40px;
+}
+
+p img {
+  display: block;
+  margin: auto;
 }
 
 section h1,
 section h2,
 section h3 {
   color: #f0f6fc;
+}
+
+
+section p, ul {
+  font-size: 0.9rem !important;
 }
 
 section h1 {

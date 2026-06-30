@@ -1,0 +1,42 @@
+# The virtualization stack: user-facing tooling at the top,
+# kernel virtualization at the bottom. virtiofsd bridges host and guest.
+vars: {
+  ...@_theme
+}
+
+direction: up
+
+virtmanager: virt-manager (GUI) {
+  style.stroke: "#1dff99"
+  style.font-color: "#c9d1d9"
+}
+
+libvirt: libvirt (API, CLI, daemons) {
+  style.stroke: "#1dff99"
+  style.font-color: "#c9d1d9"
+}
+
+qemu: QEMU (hardware emulation) {
+  style.stroke: "#1dff99"
+  style.font-color: "#c9d1d9"
+}
+
+kernel: Linux kernel {
+  style.stroke: "#8b949e"
+  style.font-color: "#c9d1d9"
+
+  kvm: KVM (CPU + RAM) {
+    style.stroke: "#1dff99"
+    style.font-color: "#c9d1d9"
+  }
+}
+
+virtiofsd: virtiofsd (shared filesystem) {
+  style.stroke: "#58a6ff"
+  style.font-color: "#c9d1d9"
+}
+
+virtmanager -> libvirt: controls
+libvirt -> qemu: manages
+qemu -> kernel.kvm: uses
+qemu -> virtiofsd: host + guest

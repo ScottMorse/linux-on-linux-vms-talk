@@ -20,9 +20,11 @@ if (!hasD2) {
   process.exit(0);
 }
 
-const sources = await Array.fromAsync(
-  new Glob("slides/diagrams/*.d2").scan("."),
-);
+// Underscore-prefixed files (e.g. _theme.d2) are shared partials meant to be
+// imported by other diagrams, not rendered on their own.
+const sources = (
+  await Array.fromAsync(new Glob("slides/diagrams/*.d2").scan("."))
+).filter((src) => !src.split("/").pop()!.startsWith("_"));
 if (sources.length === 0) {
   console.log("No .d2 sources found in slides/diagrams/.");
   process.exit(0);
@@ -31,13 +33,10 @@ if (sources.length === 0) {
 let failed = false;
 for (const src of sources) {
   const out = src.replace(/\.d2$/, ".svg");
-  const proc = Bun.spawn(
-    ["d2", "--sketch", "--theme", D2_THEME, "--pad", "16", src, out],
-    {
-      stdout: "inherit",
-      stderr: "inherit",
-    },
-  );
+  const proc = Bun.spawn(["d2", "--theme", D2_THEME, "--pad", "16", src, out], {
+    stdout: "inherit",
+    stderr: "inherit",
+  });
   const code = await proc.exited;
   if (code === 0) console.log(`${src} => ${out}`);
   else failed = true;
