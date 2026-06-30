@@ -16,7 +16,7 @@ host: Host (your main system) {
     style.stroke: "#1dff99"
     style.font-color: "#c9d1d9"
   }
-  libvirt: libvirt (API, CLI, daemons) {
+  libvirt: libvirt\nAPI, CLI, daemons {
     style.stroke: "#1dff99"
     style.font-color: "#c9d1d9"
   }
@@ -34,11 +34,11 @@ host: Host (your main system) {
       style.font-color: "#c9d1d9"
     }
   }
-  share: shared directory {
+  share: Shared directory\ne.g. ~/my-shared-files {
     style.stroke: "#8b949e"
     style.font-color: "#c9d1d9"
   }
-  disk: Disk Image\nVM OS installation\n(qcow2 / real partition) {
+  disk: Disk Image\nVM OS installation\n(qcow2 / real disk (bare metal)) {
     shape: cylinder
     style.stroke: "#1dff99"
     style.font-color: "#c9d1d9"
@@ -54,38 +54,38 @@ guest: Guest VM {
   style.fill: "#100d0d"
   style.font-color: "#c9d1d9"
 
-  vcpu: virtual CPU + RAM {
+  vcpu: Virtual CPU + RAM {
     style.stroke: "#1dff99"
     style.font-color: "#c9d1d9"
   }
-  devices: virtual devices {
+  devices: Virtual devices {
     style.stroke: "#1dff99"
     style.font-color: "#c9d1d9"
   }
-  drive: virtual disk {
+  drive: Virtual disk\nVM's OS root/boot {
     shape: cylinder
     style.stroke: "#1dff99"
     style.font-color: "#c9d1d9"
   }
-  mount: /mnt/share {
-    style.stroke: "#58a6ff"
+  mount: External volume\n(Mountable)\ne.g. /mnt/share {
+    style.stroke: "#4d555e"
     style.font-color: "#c9d1d9"
   }
-}
+} 
 
 # Management chain on the host.
 host.virtmanager -> host.libvirt: controls
 host.libvirt -> host.qemu: manages
-host.libvirt -> host.virtiofsd: launches
+host.libvirt -> host.virtiofsd: manages
 host.qemu -> host.kernel.kvm: uses
 
 # Virtual hardware presented to the guest.
-host.kernel.kvm -> guest.vcpu: vCPUs + RAM
-host.qemu -> guest.devices: emulation
+host.kernel.kvm -> guest.vcpu: provides
+host.qemu -> guest.devices: emulates
 
 # virtiofsd bridges a host directory to a guest mount.
 host.share -> host.virtiofsd: exposed
-host.virtiofsd -> guest.mount: available as external volume
+host.virtiofsd -> guest.mount: provides
 
 # A disk image (or host partition) backs the guest's virtual disk.
 host.disk -> guest.drive: attached

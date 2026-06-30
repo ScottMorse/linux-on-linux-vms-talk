@@ -108,7 +108,7 @@ Containers are:
 
 ##### Basic VM Architecture
 
-![height:620](diagrams/noteworthy-tools.svg)
+![height:620](diagrams/basic-architecture.svg)
 
 ---
 
