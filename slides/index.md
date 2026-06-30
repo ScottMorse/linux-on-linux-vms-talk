@@ -29,6 +29,12 @@ html: true
 
 ## Local VMs for Sandboxed Workflows
 
+<div class="talk-notes">
+
+[https://github.com/ScottMorse/linux-on-linux-vms-talk](https://github.com/ScottMorse/linux-on-linux-vms-talk)
+
+</div>
+
 ---
 
 # Why VMs?
@@ -37,11 +43,10 @@ A local virtual machine provides a **fully separate operating system**.
 
 Modern VM tooling is **highly optimized** so that you only use the resources you need.
 
-For example, the VM's instructions run on **real CPU cores** securely, and only
-the cores actually being used are taken, up to the max allocated.
-
-Storage and memory
-operate similarly, where **only the space needed is used**.
+- VM's instructions run on **real CPU cores** securely
+  - Only the cores actually being used are taken, up to the max allocated
+- Storage and memory
+  operate similarly, where **only the space needed is used**.
 
 ## For Development
 
@@ -52,10 +57,37 @@ with a full-featured desktop environment.
 
 # VMs vs. Containers
 
-- Containers
-  - More lightweight
+Containers are:
+
+- More lightweight
+- Less isolated
   - Share the host's kernel
-  - Isolation limited to a headless environment
+    - macOS nuance: Docker Desktop uses a Linux VM to run containers, but all containers share that VM's kernel
+  - Limited to a headless environment
+    - Browser work must happen on your host
+    - Less can be provided within the isolated sandbox to an agent
+  - Isolation is at the **process** level, rather than the **machine** level
+
+---
+
+# Advantages of Linux
+
+- For the guest system, Linux is often the ideal OS for a virtual machine
+  - Linux distributions are free, open, and lightweight
+- For the host system, Linux is also a strong choice
+  - A regular Linux user can have a similar development experience in the VM as on the host
+  - The Linux kernel ships with virtualization capabilities
+  - Strong tooling for script-driven VM management
+
+# macOS Host
+
+- A similar architecture described in this talk can be achieved with different tools
+- Only ARM-compatible Linux distributions can run on Apple Silicon machines
+
+# Windows Host
+
+- WSL2 is a Windows-native virtualization layer on top of WSL that's closer to Linux's in
+  experience and optimization
 
 ---
 
@@ -79,4 +111,23 @@ with a full-featured desktop environment.
 
 ##### Basic VM Architecture
 
-![height:600](diagrams/noteworthy-tools.svg)
+![height:620](diagrams/noteworthy-tools.svg)
+
+---
+
+# Overlays
+
+What do you do when you want multiple VMs that are isolated from each other?
+
+**Overlays** provide an optimized layer on top of a **base VM image** that
+act light lightweight clones.
+
+An overlay:
+
+- Acts like a separate VM
+- Is fast to spin up and tear down once your base image exists
+- Is optimized for space and performance
+  - Storage: only its changes on top of the base system are written
+  - CPU/RAM: allocated just like any other VM
+- Can have a dedicated shared filesystem
+  - You can stage a project's code in a shared directory from your host
