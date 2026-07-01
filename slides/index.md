@@ -115,7 +115,7 @@ Containers are:
 # Overlays
 
 **Overlays** provide an optimized layer on top of a **base VM image** that
-act light lightweight clones.
+act like lightweight clones.
 
 An overlay:
 
