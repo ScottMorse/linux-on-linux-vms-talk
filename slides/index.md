@@ -121,12 +121,16 @@ I use a personal CLI to:
 I prefer to use **git bundles** to sync code changes from an overlay.
 
 - A **bundle** is a portable pack of commits that can be transferred between repositories
-- I sync bundles between a dedicated **git worktree** on the host and the overlay's shared directory
-- I avoid directly interacting with the VM-owned repo and only pull committed source changes
+- I sync bundles between a **git worktree on the host** and the **directory shared to the overlay**
+- I avoid directly interacting with the VM-owned repo and **only pull committed source changes**
 
 ---
 
 ![height:670](diagrams/excalidraw-overlays.svg)
+
+<!--
+- Main idea of Host Worktrees: this is where I review and test changes host-side
+-->
 
 ---
 
