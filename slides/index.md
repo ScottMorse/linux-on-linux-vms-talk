@@ -79,12 +79,6 @@ for the host and guest means a **consistent experience**, and tooling is **highl
 
 ---
 
-##### Basic VM Architecture
-
-![height:620](diagrams/basic-architecture.svg)
-
----
-
 # VM Overlays
 
 An **overlay** is an optimized layer on top of a **base VM image** that
@@ -132,9 +126,7 @@ I prefer to use **git bundles** to sync code changes from an overlay.
 
 ---
 
-##### Overlays: Example setup
-
-![height:620](diagrams/overlays.svg)
+![height:670](diagrams/excalidraw-overlays.svg)
 
 ---
 
@@ -169,6 +161,6 @@ $ project vm pull # Sync code changes from the VM to host's worktree
 $ project vm code # Open IDE for the host-owned worktree
 $ project vm push # Sync code changes to the VM
 $ project go # cd back to main repo
-$ git merge my-vm_pacwich_my-vm-feature # Maybe merge changes from generated branch
+$ git merge my-vm_pacwich_my-vm-feature # Maybe merge changes from host worktree
 $ project vm down my-vm-feature # Tear down the VM overlay
 ```
