@@ -34,7 +34,7 @@ html: true
 
 ---
 
-# Linux On Linux
+# Linux on Linux
 
 ## Local VMs for Sandboxed Workflows
 
@@ -49,9 +49,9 @@ html: true
 # Advantages of VMs
 
 A virtual machine provides a **fully separate operating system** that
-can act as a sandbox for experimentation or agent development.
+can act as a development sandbox.
 
-Modern VM tooling is **highly optimized** so that you only use the resources you need.
+Modern VM tooling is **highly optimized**:
 
 - A VM's instructions can run directly on **real CPU cores** securely
 - Resources you allocate are **only used when needed** (CPU, RAM, storage, etc.)
@@ -85,24 +85,29 @@ for the host and guest means a **consistent experience**, and tooling is **highl
 
 ---
 
-# Overlays
+# VM Overlays
 
-**Overlays** provide an optimized layer on top of a **base VM image** that
-act like **lightweight clones**.
+An **overlay** is an optimized layer on top of a **base VM image** that
+is like a **lightweight clone**.
 
 An overlay:
 
 - Acts like a **separate VM**
 - Is **fast** to spin up and tear down
 - Is **storage-optimized**: only writes its changes on top of the base system
-- Can be given a **dedicated shared filesystem**
+- Can be given a **dedicated shared filesystem** (host-owned directory acts like a mounted drive)
 
-This can be ideal for development
+This can be ideal for development:
 
 1. Spin up a fresh overlay for some task
 2. Share a specific directory to the overlay
 3. Experiment/develop freely
 4. Discard when done (base VM stays clean)
+
+<!--
+Notes:
+- No OS installation for an overlay
+-->
 
 ---
 
@@ -112,16 +117,16 @@ This can be ideal for development
 
 I use a personal CLI to:
 
-- Help me set up a fresh VM base system
-- Manage named overlays on top of the base (create, open, destroy, etc.)
-- Stage a repo on a given overlay's shared directory
-- Sync code changes to and from the overlay
+- Help me set up a **fresh VM** base system
+- Manage named overlays on top of the base (**create**, **open**, **destroy**, etc.)
+- **Stage a repo** on a given overlay's shared directory
+- **Sync code changes** to and from the overlay
 
 ## Syncing Code Changes
 
 I prefer to use **git bundles** to sync code changes from an overlay.
 
-- A **bundle** is a pack of commits that can be transferred between repositories
+- A **bundle** is a portable pack of commits that can be transferred between repositories
 - I sync bundles between a dedicated **git worktree** on the host and the overlay's shared directory
 - I avoid directly interacting with the VM-owned repo and only pull committed source changes
 
