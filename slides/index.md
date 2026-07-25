@@ -23,9 +23,18 @@ html: true
 
 </div>
 
+<!--
+- Introduce self
+- Check out pacwich for Monorepo tooling
+- See me for holographic stickers after
+- Check out my blog
+  - It's linked in the pacwich docs
+  - OSS releases and engineering philosophy
+-->
+
 ---
 
-# Linux on Linux
+# Linux On Linux
 
 ## Local VMs for Sandboxed Workflows
 
@@ -37,72 +46,36 @@ html: true
 
 ---
 
-# Why VMs?
+# Advantages of VMs
 
-A local virtual machine provides a **fully separate operating system**.
+A virtual machine provides a **fully separate operating system** that
+can act as a sandbox for experimentation or agent development.
 
 Modern VM tooling is **highly optimized** so that you only use the resources you need.
 
-- VM's instructions run on **real CPU cores** securely
-- Generally, the resources allocated are **only used when needed**.
+- A VM's instructions can run directly on **real CPU cores** securely
+- Resources you allocate are **only used when needed** (CPU, RAM, storage, etc.)
 
-## For Development
+## VMs _vs._ Containers
 
-You get an entire system you own as a sandbox to **experiment** with or **run an agent more freely**,
-with a full-featured desktop environment.
+Containers are _more lightweight_ but _less isolated_.
 
----
+## Advantage of Linux
 
-# VMs vs. Containers
+Linux's kernel provides a **native hypervisor**, distributions can
+make **ideal VM images** (light, open, free), using Linux
+for the host and guest means a **consistent experience**, and tooling is **highly scriptable**.
 
-Containers are:
+<!--
+- Running local VMs on your machine might be more realistic than you think
 
-- More lightweight
-- Less isolated (isolated **process** rather than **machine**)
-  - Containers share the host's kernel
-    - macOS nuance: Docker containers share a Linux VM's kernel under the hood
-  - Limited to a headless environment
-    - Browser work must happen on your host
-    - Less can be provided within the isolated sandbox to an agent
+- Containers:
+  - Share the host system's kernel so an attacker could potentially escalate privileges
+  - Note: Docker containers on macOS share a Linux VM under teh hood
 
----
-
-# Advantages of Linux
-
-- For the guest system, Linux is often the ideal OS for a virtual machine
-  - Linux distributions are free, open, and lightweight
-- For the host system, Linux is also a strong choice
-  - A regular Linux user can have a similar development experience in the VM as on the host
-  - The Linux kernel ships with virtualization capabilities
-  - Strong tooling for script-driven VM management
-
-# macOS Host
-
-- A similar architecture described in this talk can be achieved with different tools
-- Only ARM-compatible Linux distributions can run on Apple Silicon machines
-
-# Windows Host
-
-- WSL2 is a Windows-native virtualization layer on top of WSL that's closer to Linux's in
-  experience and optimization
-
----
-
-# Noteworthy Tools
-
-- **KVM**
-  - **K**ernel-based **V**irtual **M**achine
-  - Already part of the the Linux kernel
-  - Provides CPU cores and RAM to a guest system
-- **QEMU**
-  - **Q**uick **Emu**lator
-  - Emulates the rest of the hardware (PCI, display, USB, etc.)
-- **libvirt**
-  - API, CLI, and daemons on top of QEMU
-  - Declaratively manage VMs
-  - Takes XML configuration
-- **virt-manager**: GUI for libvirt
-- **virtiofsd**: Provides shared filesystems between host and guest
+- Linux:
+  - The scriptablity turned out to be a major advantage for me (more convenient to use)
+-->
 
 ---
 
@@ -115,15 +88,42 @@ Containers are:
 # Overlays
 
 **Overlays** provide an optimized layer on top of a **base VM image** that
-act like lightweight clones.
+act like **lightweight clones**.
 
 An overlay:
 
-- Acts like a separate VM
-- Is fast to spin up and tear down once your base image exists
-- Is storage-optimized: only its changes on top of the base system are written
-- Can have a dedicated shared filesystem
-  - You can stage a project's code in a shared directory from your host
+- Acts like a **separate VM**
+- Is **fast** to spin up and tear down
+- Is **storage-optimized**: only writes its changes on top of the base system
+- Can be given a **dedicated shared filesystem**
+
+This can be ideal for development
+
+1. Spin up a fresh overlay for some task
+2. Share a specific directory to the overlay
+3. Experiment/develop freely
+4. Discard when done (base VM stays clean)
+
+---
+
+# My Agentic Development Workflow
+
+## Scripting VM and git operations
+
+I use a personal CLI to:
+
+- Help me set up a fresh VM base system
+- Manage named overlays on top of the base (create, open, destroy, etc.)
+- Stage a repo on a given overlay's shared directory
+- Sync code changes to and from the overlay
+
+## Syncing Code Changes
+
+I prefer to use **git bundles** to sync code changes from an overlay.
+
+- A **bundle** is a pack of commits that can be transferred between repositories
+- I sync bundles between a dedicated **git worktree** on the host and the overlay's shared directory
+- I avoid directly interacting with the VM-owned repo and only pull committed source changes
 
 ---
 
@@ -133,21 +133,37 @@ An overlay:
 
 ---
 
-# Agentic Development Workflow
+# Personal CLI Example Workflows
 
-## Syncing Code Changes
-
-I prefer to use **git bundles** to sync code changes from an overlay.
-
-- A **bundle** is a pack of commits that can be transferred between repositories
-- I sync bundles between a dedicated **git worktree** on the host and the overlay's shared directory
-- I avoid copying the entire repo to prevent subtle injection from ignored files or git hooks
-
-## Scripting
-
-I use custom scripts to quickly:
-
-- Help me set up a fresh VM base system
-- Create and destroy named overlays on top of the base
-- Stage a repo on a given overlay's shared directory
-- Sync git bundles for a given overlay
+```bash
+$ # See state of all projects' worktrees and overlays
+$ # E.g. whether ahead/behind the main repo's current branch,
+$ # or if VM overlays are synced between host/guest
+$ project state
+$
+$ project go pacwich # cd to my main pacwich repo
+$
+$ # Commands can infer project from cwd
+$ project claude # Open Claude session for current project
+$ project code # Open IDE for current project
+$
+$ # Worktree commands
+$ project wt create my-local-feature # Create a local git worktree (no VM involved)
+$ project wt go my-local-feature # cd to the worktree
+$ project wt claude # Open Claude session for the worktree
+$ project wt code # Open IDE for the worktree
+$ project go # cd back to main repo
+$ git merge my-local-feature # Maybe merge changes from generated branch
+$ project wt remove my-local-feature # Tear down the worktree
+$
+$ # VM overaly commands (similar to worktree commands)
+$ project vm up my-vm-feature --open # Create and open a fresh VM overlay
+$ project vm go my-vm-feature # cd to the host-owned worktree
+$ project vm diff # See git diff of VM-owned changes
+$ project vm pull # Sync code changes from the VM to host's worktree
+$ project vm code # Open IDE for the host-owned worktree
+$ project vm push # Sync code changes to the VM
+$ project go # cd back to main repo
+$ git merge my-vm_pacwich_my-vm-feature # Maybe merge changes from generated branch
+$ project vm down my-vm-feature # Tear down the VM overlay
+```
