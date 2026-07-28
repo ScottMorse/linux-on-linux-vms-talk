@@ -16,6 +16,14 @@ img {
   border-radius: 8px;
 }
 
+.diagram-full {
+  width: auto;
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
 h1,h2,h3,h4,h5,h6 {
   font-family: "Lexend", sans-serif !important;
 }

@@ -60,12 +60,6 @@ Modern VM tooling is **highly optimized**:
 
 Containers are _more lightweight_ but _less isolated_.
 
-## Advantage of Linux
-
-Linux's kernel provides a **native hypervisor**, distributions can
-make **ideal VM images** (light, open, free), using Linux
-for the host and guest means a **consistent experience**, and tooling is **highly scriptable**.
-
 <!--
 - Running local VMs on your machine might be more realistic than you think
 
@@ -74,7 +68,9 @@ for the host and guest means a **consistent experience**, and tooling is **highl
   - Note: Docker containers on macOS share a Linux VM under teh hood
 
 - Linux:
-  - The scriptablity turned out to be a major advantage for me (more convenient to use)
+  - Native virtualization support in the Kernel
+  - similar developer experience
+  - The scriptability turned out to be a major advantage for me (more convenient to use)
 -->
 
 ---
@@ -91,16 +87,12 @@ An overlay:
 - Is **storage-optimized**: only writes its changes on top of the base system
 - Can be given a **dedicated shared filesystem** (host-owned directory acts like a mounted drive)
 
-This can be ideal for development:
-
-1. Spin up a fresh overlay for some task
-2. Share a specific directory to the overlay
-3. Experiment/develop freely
-4. Discard when done (base VM stays clean)
+This can be ideal for development to quickly **spin up pre-setup sandboxes**, potentially **run them in parallel**, and **destroy them when done**.
 
 <!--
 Notes:
 - No OS installation for an overlay
+- Ideal for development sandboxes
 -->
 
 ---
@@ -111,22 +103,23 @@ Notes:
 
 I use a personal CLI to:
 
-- Help me set up a **fresh VM** base system
-- Manage named overlays on top of the base (**create**, **open**, **destroy**, etc.)
-- **Stage a repo** on a given overlay's shared directory
-- **Sync code changes** to and from the overlay
+- Manage named overlays (**create**, **open**, **destroy**, etc.)
+- **Share a repo** with the the overlay
+- **Sync code changes** to and from the overlay's repo
 
-## Syncing Code Changes
+## Syncing Code Securely
 
-I prefer to use **git bundles** to sync code changes from an overlay.
+I use **git bundles** to sync code changes from an overlay.
 
 - A **bundle** is a portable pack of commits that can be transferred between repositories
-- I sync bundles between a **git worktree on the host** and the **directory shared to the overlay**
 - I avoid directly interacting with the VM-owned repo and **only pull committed source changes**
+  (no poisoned git hooks)
 
 ---
 
-![height:670](diagrams/excalidraw-overlays.svg)
+<!-- ![height:670](diagrams/excalidraw-overlays.svg) -->
+
+<img src="diagrams/excalidraw-overlays.svg" alt="Overlay diagram" class="diagram-full" width="670" />
 
 <!--
 - Main idea of Host Worktrees: this is where I review and test changes host-side
@@ -134,13 +127,10 @@ I prefer to use **git bundles** to sync code changes from an overlay.
 
 ---
 
-# Personal CLI Example Workflows
+# Personal CLI Examples
 
 ```bash
-$ # See state of all projects' worktrees and overlays
-$ # E.g. whether ahead/behind the main repo's current branch,
-$ # or if VM overlays are synced between host/guest
-$ project state
+$ project state # See state of all projects' worktrees and overlays
 $
 $ project go pacwich # cd to my main pacwich repo
 $
@@ -148,22 +138,16 @@ $ # Commands can infer project from cwd
 $ project claude # Open Claude session for current project
 $ project code # Open IDE for current project
 $
-$ # Worktree commands
-$ project wt create my-local-feature # Create a local git worktree (no VM involved)
-$ project wt go my-local-feature # cd to the worktree
-$ project wt claude # Open Claude session for the worktree
-$ project wt code # Open IDE for the worktree
-$ project go # cd back to main repo
-$ git merge my-local-feature # Maybe merge changes from generated branch
-$ project wt remove my-local-feature # Tear down the worktree
-$
 $ # VM overaly commands (similar to worktree commands)
 $ project vm up my-vm-feature --open # Create and open a fresh VM overlay
 $ project vm go my-vm-feature # cd to the host-owned worktree
-$ project vm diff # See git diff of VM-owned changes
-$ project vm pull # Sync code changes from the VM to host's worktree
+$
+$ # VM commands can infer the overlay from the cwd
+$ project vm diff # See git diff between VM and host worktree
 $ project vm code # Open IDE for the host-owned worktree
+$ project vm pull # Sync code changes from the VM to host's worktree
 $ project vm push # Sync code changes to the VM
+$
 $ project go # cd back to main repo
 $ git merge my-vm_pacwich_my-vm-feature # Maybe merge changes from host worktree
 $ project vm down my-vm-feature # Tear down the VM overlay
